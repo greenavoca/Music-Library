@@ -1,10 +1,19 @@
 import random
+import os.path
+
+
+library = os.path.isfile("music_lib.txt")
+if library:
+    print("Library exists")
+else:
+    with open("music_lib.txt", "w"):
+        print("Creat library file")
 
 
 def get_all():
     songs = []
-    try:
-        with open("music_lib.txt", "r") as music:
+    with open("music_lib.txt", "r") as music:
+        if os.path.getsize(library) is not None:
             for song in music:
                 author, title, genre = song.strip().split(", ")
                 songs.append({
@@ -12,9 +21,9 @@ def get_all():
                     "title": title,
                     "genre": genre
                 })
-    except ValueError:
-        print(f"It's empty!")
-    return songs
+            return songs
+        else:
+            print("Empty database")
 
 
 def show_list(songs):
@@ -67,8 +76,11 @@ def delete():
 
 def random_song():
     songs_list = get_all()
-    song = random.choice(songs_list)
-    print(f"Your random song is: {song['author']} - {song['title']} ({song['genre']})")
+    if songs_list:
+        song = random.choice(songs_list)
+        print(f"Your random song is: {song['author']} - {song['title']} ({song['genre']})")
+    else:
+        print("Database is empty")
 
 
 menu = """
@@ -85,27 +97,31 @@ Please choose what would you like to do:
 
 """
 
-choose = input(menu).strip().lower()
-
-while choose != "q":
-    if choose == "s":
-        music_list = get_all()
-        show_list(music_list)
-    elif choose == "f":
-        matching_songs = find()
-        if matching_songs:
-            show_list(matching_songs)
-        else:
-            print(f"It's empty :(")
-    elif choose == "a":
-        add()
-    elif choose == "d":
-        delete()
-    elif choose == "r":
-        random_song()
-    else:
-        print(f"There is no {choose} choice!")
-
+def main():
     choose = input(menu).strip().lower()
 
-print(f"See you again!")
+    while choose != "q":
+        if choose == "s":
+            music_list = get_all()
+            show_list(music_list)
+        elif choose == "f":
+            matching_songs = find()
+            if matching_songs:
+                show_list(matching_songs)
+            else:
+                print(f"It's empty :(")
+        elif choose == "a":
+            add()
+        elif choose == "d":
+            delete()
+        elif choose == "r":
+            random_song()
+        else:
+            print(f"There is no {choose} choice!")
+
+        choose = input(menu).strip().lower()
+
+
+if __name__ == "__main__":
+    main()
+    print(f"See you again!")
