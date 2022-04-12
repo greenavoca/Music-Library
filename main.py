@@ -60,18 +60,21 @@ def find():
 
 
 def delete():
-    delete_list = get_all()
-    author = input("Enter author name to delete: ").strip().lower()
-    title = input("Enter title to delete: ").strip().lower()
-    for song in delete_list:
-        if author in song['author'] or title in song['title']:
-            if title in song['author'] or title in song['title']:
-                delete_list.remove(song)
+    if os.path.getsize("music_lib.txt") != 0:    
+        delete_list = get_all()
+        author = input("Enter author name to delete: ").strip().lower()
+        title = input("Enter title to delete: ").strip().lower()
+        for song in delete_list:
+            if author in song['author'] or title in song['title']:
+                if title in song['author'] or title in song['title']:
+                    delete_list.remove(song)
 
-    with open("music_lib.txt", "w") as file:
-        for each in delete_list:
-            auth, tit, gen = each['author'], each['title'], each['genre']
-            file.write(f"{auth}, {tit}, {gen}" + "\n")
+        with open("music_lib.txt", "w") as file:
+            for each in delete_list:
+                auth, tit, gen = each['author'], each['title'], each['genre']
+                file.write(f"{auth}, {tit}, {gen}" + "\n")
+    else:
+        print(f"First add a song!")
 
 
 def random_song():
