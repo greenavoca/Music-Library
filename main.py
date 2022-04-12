@@ -2,18 +2,21 @@ import random
 import os.path
 
 
-library = os.path.isfile("music_lib.txt")
-if library:
-    print("Library exists")
-else:
-    with open("music_lib.txt", "w"):
+LIBRARY_NAME = 'music_lib.txt'
+
+
+is_library = os.path.isfile(LIBRARY_NAME)
+if not is_library:
+    with open(LIBRARY_NAME, "w"):
         print("Creat library file")
+else:
+    print("Library exists", end='\n')
 
 
-def get_all():
+def get_all() -> list:
     songs = []
-    with open("music_lib.txt", "r") as music:
-        if os.path.getsize(library) is not None:
+    with open(LIBRARY_NAME, "r") as music:
+        if os.path.getsize(LIBRARY_NAME) is not None:
             for song in music:
                 author, title, genre = song.strip().split(", ")
                 songs.append({
@@ -23,24 +26,25 @@ def get_all():
                 })
             return songs
         else:
-            print("Empty database")
+            print("Empty database", end='\n')
 
 
-def show_list(songs):
-    print()
-    for song in songs:
-        print(f"{song['author']} - {song['title']} ({song['genre']})")
-    print()
+def show_list(songs_list):
+    if not songs_list:
+        print("Database is empty", end='\n')
+    else:
+        for song in songs_list:
+            print(f"{song['author']} - {song['title']} ({song['genre']})", end='\n')
 
 
 def add():
     author = input("Enter an author: ").strip().lower()
     title = input("Enter a title: ").strip().lower()
     genre = input("Enter a genre: ").strip().lower()
-    with open("music_lib.txt", "r") as checker:
+    with open(LIBRARY_NAME, "r") as checker:
         data = checker.read()
 
-    with open("music_lib.txt", "a") as position:
+    with open(LIBRARY_NAME, "a") as position:
         song = f"{author}, {title}"
         if song not in data:
             position.write(f"{author}, {title}, {genre}" + "\n")
@@ -48,7 +52,7 @@ def add():
             print(f"Song already exist!")
 
 
-def find():
+def find() -> list:
     songs_list = get_all()
     match_songs = []
     word = input("Enter author, title or genre: ").strip().lower()
@@ -60,7 +64,7 @@ def find():
 
 
 def delete():
-    if os.path.getsize("music_lib.txt") != 0:    
+    if os.path.getsize(LIBRARY_NAME) != 0:    
         delete_list = get_all()
         author = input("Enter author name to delete: ").strip().lower()
         title = input("Enter title to delete: ").strip().lower()
@@ -69,7 +73,7 @@ def delete():
                 if title in song['author'] or title in song['title']:
                     delete_list.remove(song)
 
-        with open("music_lib.txt", "w") as file:
+        with open(LIBRARY_NAME, "w") as file:
             for each in delete_list:
                 auth, tit, gen = each['author'], each['title'], each['genre']
                 file.write(f"{auth}, {tit}, {gen}" + "\n")
@@ -105,8 +109,8 @@ def main():
 
     while choose != "q":
         if choose == "s":
-            music_list = get_all()
-            show_list(music_list)
+            db = get_all()
+            show_list(db)
         elif choose == "f":
             matching_songs = find()
             if matching_songs:
@@ -120,7 +124,7 @@ def main():
         elif choose == "r":
             random_song()
         else:
-            print(f"There is no {choose} choice!")
+            print(f"There is no `{choose}` choice!")
 
         choose = input(menu).strip().lower()
 
