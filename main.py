@@ -8,7 +8,7 @@ LIBRARY_NAME = 'music_lib.txt'
 is_library = os.path.isfile(LIBRARY_NAME)
 if not is_library:
     with open(LIBRARY_NAME, "w"):
-        print("Creat library file")
+        print("Create library file")
 else:
     print("Library exists", end='\n')
 
@@ -64,19 +64,16 @@ def find() -> list:
 
 
 def delete():
-    if os.path.getsize(LIBRARY_NAME) != 0:    
-        delete_list = get_all()
+    if os.path.getsize(LIBRARY_NAME) != 0:
         author = input("Enter author name to delete: ").strip().lower()
         title = input("Enter title to delete: ").strip().lower()
-        for song in delete_list:
-            if author in song['author'] or title in song['title']:
-                if title in song['author'] or title in song['title']:
-                    delete_list.remove(song)
+        with open(LIBRARY_NAME, "r") as deleter:
+            lines = deleter.readlines()
 
         with open(LIBRARY_NAME, "w") as file:
-            for each in delete_list:
-                auth, tit, gen = each['author'], each['title'], each['genre']
-                file.write(f"{auth}, {tit}, {gen}" + "\n")
+            for each in lines:
+                if f"{author}, {title}" not in each:
+                    file.write(each)
     else:
         print(f"First add a song!")
 
